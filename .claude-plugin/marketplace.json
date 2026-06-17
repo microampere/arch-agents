@@ -1,0 +1,14 @@
+{
+  "name": "arch-agents",
+  "owner": { "name": "N28 Tech" },
+  "metadata": {
+    "description": "Marketplace for the arch ADR plugin for Salesforce implementation projects."
+  },
+  "plugins": [
+    {
+      "name": "arch",
+      "source": "./",
+      "description": "Architecture Decision Record skill for Salesforce implementation projects."
+    }
+  ]
+}
