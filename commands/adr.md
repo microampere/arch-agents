@@ -25,6 +25,7 @@ Whenever this document says to "run the Interview Protocol", follow these rules 
 - Read `arch/ADR.md` before each question. For every question, provide your recommended answer based on what is already designed in `arch/ADR.md` and your Salesforce Technical Architect expertise. State the recommendation clearly and ask the user to confirm or redirect.
 - Ask **one question at a time**. Never ask two questions in the same message. Wait for the user's response before continuing. Asking multiple questions at once is bewildering.
 - If a prior decision in `arch/ADR.md` already answers a question, state that it does and confirm it still applies — do not re-ask decisions already made.
+- Never create an Open Question because the answer seems uncertain or complex. Keep asking — probe sub-questions, offer concrete recommendations, narrow the options — until the user gives a concrete answer **or** explicitly says "I don't know" or "TBD". Only those explicit deferrals become Open Questions.
 - When all branches are exhausted and no open questions remain, say exactly:
 
   > **I have enough. Shall I proceed?**
@@ -72,15 +73,17 @@ Run the **Interview Protocol** scoped to every architectural decision this story
 
 | Domain | Example decisions |
 |---|---|
+| User Journey | Ordered steps a user takes end-to-end for each entry point and mode; screen states, loading/error states, confirmations, post-completion navigation — cover only for stories with a UI component |
 | Data model | Objects, fields, relationships, record types |
 | Automation | Flow vs Apex trigger vs scheduled job; sync vs async |
-| Integration | REST/SOAP/Platform Events/CDC/Outbound Messaging; auth pattern |
-| UI | LWC component design, navigation, data binding |
+| Integration | REST/SOAP/Platform Events/CDC/Outbound Messaging; auth pattern; for each external or platform API consumed: the exact input shape (parameters or fieldValues map keys) and the return/response shape the caller depends on |
+| UI | LWC component design, navigation, data binding; component mode/context determination (how the component identifies which surface it is on and which mode to enter); @api properties and internal state; conditional rendering rules; user-facing loading and error states |
 | Sharing & Visibility | OWD, sharing rules, manual shares, with sharing / without sharing |
 | Governor limits | Bulkification strategy, async offload, limit exposure points |
-| Error handling | Retry strategy, dead-letter logging, user-facing messages |
+| Error handling | Retry strategy, dead-letter logging, user-facing messages; for multi-step transactions without rollback: what happens to partial state if a later step fails, and what does the user see |
 | Deployment | Metadata dependencies, order of operations, rollback plan |
 | Testing | Unit test scope, mock strategy, integration test triggers |
+| Method Contracts | Signature for every @AuraEnabled method (name, typed parameters, return type), every @wire adapter (adapter name, parameters, reactive property type), and every wrapper/inner class returned (all fields with types) — cover only methods introduced or materially changed by this story; address this domain last, after all upstream decisions are settled |
 
 Walk depth-first: resolve dependencies between decisions before moving to unrelated domains (e.g., confirm the data model before asking about automation that references it).
 
@@ -120,8 +123,29 @@ Write or overwrite the entry for this ticket in `arch/ADR.md`.
 ### Constraints & Assumptions
 - <one bullet per constraint or assumption that bounds the decisions above>
 
+### User Journey
+<!-- Include only when the story has a UI component. Omit this section entirely otherwise. -->
+**Entry point: <how the user arrives — e.g., "Quick Action on Opportunity record page">**
+1. <Step 1 — what the user sees or does>
+2. <Step 2 — ...>
+
+<!-- Repeat the block above for each distinct entry point or mode -->
+
+### Method Contracts
+<!-- Include only when the story introduces or modifies Apex methods, @wire adapters, or consumes an external/platform API. Omit this section entirely otherwise. -->
+
+#### @AuraEnabled Methods
+- `methodName(ParamType paramName, ...): ReturnType` — <one-line responsibility>
+  - Wrapper: `ClassName { FieldType field; ... }` *(include only if the return type is a custom wrapper class)*
+
+#### @wire Adapters
+- `@wire(AdapterName, { param: value }) propertyName: AdapterType`
+
+#### External / Platform APIs Consumed
+- `ClassName.method(inputShape): returnShape` — <purpose>
+
 ### Open Questions
-- <one bullet per unresolved item — omit this section entirely if nothing is unresolved>
+- <one bullet per item where the user explicitly said "I don't know" or "TBD" during the interview — omit this section entirely if none>
 ```
 
 **Rules:**
