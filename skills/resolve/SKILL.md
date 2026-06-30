@@ -1,4 +1,5 @@
 ---
+name: resolve
 description: Resolve open questions on one or more Jira story ADR entries, promoting each resolution to a Decision
 argument-hint: <ticket-key>[, <ticket-key>, ...]
 ---

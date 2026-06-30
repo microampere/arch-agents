@@ -3,5 +3,6 @@
   "version": "0.4.0",
   "description": "Architecture Decision Record and Technical Specification skills for Salesforce implementation projects.",
   "author": { "name": "JJ" },
-  "license": "MIT"
+  "license": "MIT",
+  "skills": ["./skills/adr", "./skills/resolve", "./skills/tech-spec"]
 }

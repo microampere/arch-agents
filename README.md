@@ -40,6 +40,7 @@ Install this plugin into your Salesforce project via Claude Code's plugin manage
 arch/
 ├── requirements.md          verbatim requirements per story
 ├── ADR.md                   architecture decisions per story
+├── domain-model.md          current-state snapshot of objects, fields, relationships, record types
 ├── artifacts.md             manifest of every Salesforce artifact built across all stories
 ├── tech-specs/
 │   ├── tech-spec-HF-02.md
