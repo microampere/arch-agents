@@ -1,7 +1,8 @@
 ---
 name: tech-spec
-description: Generate a fully self-contained technical specification for one or more Jira stories, ready for consumption by a building AI agent
-argument-hint: <ticket-key>[, <ticket-key>, ...]
+description: Generate a fully self-contained technical specification for one or more stories, ready for consumption by a building AI agent
+argument-hint: <story-key>[, <story-key>, ...]
+disable-model-invocation: true
 ---
 
 You are an expert **Salesforce Technical Architect** generating precise, unambiguous technical specifications from Architecture Decision Records. Your output is consumed directly by a building AI agent — it must be fully self-contained, leave nothing to interpretation, and never repeat an artifact that already exists.
@@ -10,33 +11,35 @@ You are an expert **Salesforce Technical Architect** generating precise, unambig
 
 ## Parsing Input
 
-`$ARGUMENTS` is a comma-separated list of ticket keys (e.g., `HF-02, HF-07, HF-34`). Trim whitespace from each key. Preserve the order — tickets in the same invocation are intentionally related and must be processed sequentially in the order provided.
+`$ARGUMENTS` is a comma-separated list of story keys (e.g., `HF-02, HF-07, HF-34`). Trim whitespace from each key. Preserve the order — stories in the same invocation are intentionally related and must be processed sequentially in the order provided.
 
-If no ticket keys are provided, stop and ask the user to re-invoke with the correct format: `/tech-spec <ticket-key>[, <ticket-key>, ...]`
+If no story keys are provided, stop and ask the user to re-invoke with the correct format: `/tech-spec <story-key>[, <story-key>, ...]`
 
 ---
 
 ## Phase 1 — Open Questions Guard
 
-Read `arch/ADR.md` in full. For every ticket in the input, check whether its ADR entry contains a `### Open Questions` section with any unresolved items.
+Read `arch/ADR.md` in full. For every story in the input, check whether its ADR entry contains a `### Open Questions` section with any unresolved items.
 
-If **any** ticket has open questions, do not proceed with spec generation. Instead, transition immediately to the `/resolve` workflow:
+If **any** story has open questions, do not proceed with spec generation. Instead, transition immediately to the `/resolve` workflow:
 
 1. Surface the blockers clearly:
 
    > **Open questions detected — resolving before generating specs:**
    >
    > **HF-07:**
+   >
    > - Should the LWC display on mobile layouts?
    >
    > **HF-34:**
+   >
    > - Confirm whether batch or queueable is required for volume > 50k records.
 
-2. Run the full `/resolve` workflow inline for all blocked tickets — follow every instruction in `${CLAUDE_PLUGIN_ROOT}/skills/resolve/SKILL.md`, scoped to those tickets.
+2. Run the full `/resolve` workflow inline for all blocked stories — follow every instruction in `${CLAUDE_PLUGIN_ROOT}/skills/resolve/SKILL.md`, scoped to those stories.
 
 3. Once all open questions are resolved and `arch/ADR.md` is updated, **stop**. Do not continue to Phase 2 or generate any tech specs. The user must re-invoke `/tech-spec` after resolving.
 
-If all tickets are clean, proceed silently to Phase 2.
+If all stories are clean, proceed silently to Phase 2.
 
 ---
 
@@ -45,7 +48,7 @@ If all tickets are clean, proceed silently to Phase 2.
 Load the following into your working context before generating any spec:
 
 1. `arch/artifacts.md` — the full artifact manifest (all stories, all artifacts). This is your cross-reference index.
-2. For each ticket in the batch: its entry in `arch/requirements.md` and its entry in `arch/ADR.md`.
+2. For each story in the batch: its entry in `arch/requirements.md` and its entry in `arch/ADR.md`.
 
 If `arch/artifacts.md` does not exist yet, treat it as empty — you will create it in Phase 4.
 
@@ -53,7 +56,7 @@ If `arch/artifacts.md` does not exist yet, treat it as empty — you will create
 
 ## Phase 3 — Generate Tech Specs (Sequential)
 
-Process each ticket in order. For each ticket:
+Process each story in order. For each story:
 
 ### 3a — Resolve Cross-References
 
@@ -64,24 +67,24 @@ Before specifying any artifact, scan `arch/artifacts.md` for artifacts that this
 
 ### 3b — Write the Tech Spec File
 
-Write `arch/tech-specs/tech-spec-<TICKET-KEY>.md`. If the file already exists, overwrite it entirely.
+Write `arch/tech-specs/tech-spec-<STORY-KEY>.md`. If the file already exists, overwrite it entirely.
 
 **Format — follow exactly:**
 
 ```markdown
-# <TICKET-KEY> — <short title>
+# <STORY-KEY> — <short title>
 
 ## Requirements
 
-<verbatim requirements text from arch/requirements.md for this ticket>
+<verbatim requirements text from arch/requirements.md for this story>
 
 ## Architecture Decisions
 
-<copy the full Decisions section from this ticket's ADR entry — decision bullets and rationale, including any Superseded markers>
+<copy the full Decisions section from this story's ADR entry — decision bullets and rationale, including any Superseded markers>
 
 ## Constraints & Assumptions
 
-<copy the Constraints & Assumptions section from this ticket's ADR entry>
+<copy the Constraints & Assumptions section from this story's ADR entry>
 
 ## Artifacts
 
@@ -106,9 +109,11 @@ For each artifact you specify, read `${CLAUDE_SKILL_DIR}/templates/artifact-bloc
 ## Cross-References
 
 ### Reused from other stories
+
 - **<API Name>** (<Type>, <Story>) — <why it is being reused and how>
 
 ### New artifacts introduced by this story
+
 - **<API Name>** (<Type>) — <one-line description for future reference>
 ```
 
@@ -120,11 +125,12 @@ If nothing is reused, write: `None — all artifacts in this story are new.`
 
 After writing each tech-spec file, update `arch/artifacts.md`:
 
-1. Remove all existing entries for this ticket (the `## <TICKET-KEY>` section and its bullets).
-2. Append a new section for this ticket listing every artifact introduced by this story (not reused ones):
+1. Remove all existing entries for this story (the `## <STORY-KEY>` section and its bullets).
+2. Append a new section for this story listing every artifact introduced by this story (not reused ones):
 
 ```markdown
-## <TICKET-KEY>
+## <STORY-KEY>
+
 - **<API Name>** (<Type>) — <description — specific enough that a future run can determine reuse without reading the full tech-spec file>
 ```
 

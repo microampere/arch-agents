@@ -1,0 +1,32 @@
+THIS WAS THE PLAN BEFORE TOKEN MAXES:
+
+Context
+
+The domain-model.md template (the output format for writing arch/domain-model.md) lives in
+skills/adr/templates/ but is now used by both adr (Phase 5) and resolve (Phase 4). resolve
+currently reaches into adr's internals to use it. Promote it to a shared location so neither skill
+references the other's internals and the format can't drift.
+
+Decisions:
+1. Promote to shared — move the template to shared/templates/domain-model.md.
+2. Keep the domain checklist inline — the 11-domain interview list stays duplicated inline in
+adr Phase 3 and resolve Phase 2 (no change). It's interview-driving guidance that must be in
+context to shape questions, so it is not a shared file. Recording the decision only.
+
+Changes
+
+Move skills/adr/templates/domain-model.md → shared/templates/domain-model.md, then repoint the
+three references to ${CLAUDE_PLUGIN_ROOT}/shared/templates/domain-model.md:
+
+- skills/adr/SKILL.md — Phase 5 (currently ${CLAUDE_SKILL_DIR}/templates/domain-model.md).
+- skills/adr/SKILL.md — Files section (currently format in templates/domain-model.md).
+- skills/resolve/SKILL.md — Phase 4 (currently ${CLAUDE_PLUGIN_ROOT}/skills/adr/templates/domain-model.md).
+
+adr-entry.md and artifact-blocks.md stay per-skill (single-consumer, unchanged).
+
+Verification
+
+1. shared/templates/domain-model.md exists; skills/adr/templates/ no longer has domain-model.md.
+2. grep -rn "domain-model.md" skills/*/SKILL.md — every template reference points at shared/templates/domain-model.md; no ${CLAUDE_SKILL_DIR}/templates/domain-model.md or skills/adr/templates/domain-model.md remain.
+3. Runtime-file references (arch/domain-model.md) untouched.
+4. Domain checklist still inline in both adr Phase 3 and resolve Phase 2.

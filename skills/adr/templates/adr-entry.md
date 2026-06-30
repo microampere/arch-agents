@@ -1,4 +1,4 @@
-## <TICKET-KEY> — <short title derived from requirements>
+## <STORY-KEY> — <short title derived from requirements>
 
 ### Context
 
@@ -7,7 +7,7 @@
 ### Decisions
 
 - **Decision:** <what was decided, stated precisely>  
-  **Rationale:** <why — reference Salesforce platform constraints, governor limits, or prior ADR decisions by ticket key where relevant>
+  **Rationale:** <why — reference Salesforce platform constraints, governor limits, or prior ADR decisions by story key where relevant>
 
 - **Decision:** ...  
   **Rationale:** ...
