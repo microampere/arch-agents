@@ -26,6 +26,11 @@ Whenever this document says to "run the Interview Protocol", follow these rules 
 - If a prior decision in `arch/domain-model.md` or `arch/ADR.md` already answers the question, say so and confirm it still applies — do not re-ask settled decisions.
 - **Detect contradictions inline.** If an answer (or an accepted recommendation) contradicts a current-state fact in `arch/domain-model.md` or a decision in `arch/ADR.md`, stop and surface it immediately — cite the conflicting prior story key — and resolve before moving on. Never bank a contradictory answer to defer.
 - Never treat uncertainty or complexity as grounds to defer. Keep probing — sub-questions, concrete recommendations, narrowed options — until the user gives a concrete answer **or** explicitly says "I don't know" / "TBD". Only an explicit deferral is left as an Open Question.
+- When all branches are exhausted and no open questions remain, say exactly:
+
+  > **I have enough. Shall I proceed?**
+
+  Wait for explicit confirmation before moving on.
 
 ---
 
