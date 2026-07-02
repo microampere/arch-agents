@@ -1,12 +1,12 @@
 # arch
 
-> Claude Code plugin for Salesforce projects — interview-driven ADR capture, open question resolution, and AI-ready technical specs from Jira stories.
+> Claude Code plugin for Salesforce projects — interview-driven ADR capture, open question resolution, and AI-ready technical specs from stories.
 
 ## Skills
 
 ### `/adr` — Architecture Decision Record
 
-Interactive, interview-driven session. You provide a Jira ticket key and requirements text. The skill captures your requirements verbatim, interviews you as a Salesforce Technical Architect (one question at a time, with recommendations), then writes a precise ADR entry.
+Interactive, interview-driven session. You provide a story key and requirements text. The skill captures your requirements verbatim, interviews you as a Salesforce Technical Architect (one question at a time, with recommendations), then writes a precise ADR entry.
 
 ```
 /adr HF-534 As a sales rep I need to see account health scores on the Account page so I can prioritise my pipeline calls.
@@ -22,13 +22,13 @@ Interactive. Resolves open questions in ADR entries using the same one-question-
 
 ### `/tech-spec` — Technical Specification
 
-Fully automated. Reads requirements and ADR decisions for one or more tickets and generates a fully self-contained technical specification ready for consumption by a building AI agent. Cross-references existing artifacts to enforce DRY. If open questions are detected, transitions to `/resolve` before stopping.
+Fully automated. Reads requirements and ADR decisions for one or more stories and generates a fully self-contained technical specification ready for consumption by a building AI agent. Cross-references existing artifacts to enforce DRY. If open questions are detected, transitions to `/resolve` before stopping.
 
 ```
 /tech-spec HF-02, HF-07, HF-34
 ```
 
-Multiple tickets in one invocation are processed sequentially — use this when stories are closely related.
+Multiple stories in one invocation are processed sequentially — use this when stories are closely related.
 
 ## Installation
 
@@ -40,6 +40,7 @@ Install this plugin into your Salesforce project via Claude Code's plugin manage
 arch/
 ├── requirements.md          verbatim requirements per story
 ├── ADR.md                   architecture decisions per story
+├── domain-model.md          current-state snapshot of objects, fields, relationships, record types
 ├── artifacts.md             manifest of every Salesforce artifact built across all stories
 ├── tech-specs/
 │   ├── tech-spec-HF-02.md
@@ -60,8 +61,8 @@ arch/
 ## Rules
 
 - `/tech-spec` detects open questions → transitions to `/resolve` → stops. Re-run `/tech-spec` after resolving.
-- The whole `/tech-spec` batch fails together if any one ticket has open questions.
-- Re-running any skill for the same ticket overwrites that ticket's entry.
+- The whole `/tech-spec` batch fails together if any one story has open questions.
+- Re-running any skill for the same story overwrites that story's entry.
 - ADR decisions superseded by a later story are marked `**Superseded by HF-XXX**` — never deleted.
 - `artifacts.md` is the cross-reference index — lazy-loaded per artifact, enriched over time.
 - Learnings are appended after each run when something noteworthy occurred. Clean runs write nothing.
