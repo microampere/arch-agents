@@ -43,8 +43,8 @@ arch/
 ├── domain-model.md          current-state snapshot of objects, fields, relationships, record types
 ├── artifacts.md             manifest of every Salesforce artifact built across all stories
 ├── tech-specs/
-│   ├── tech-spec-HF-02.md
-│   └── tech-spec-HF-07.md
+│   ├── tech-spec-HF-02-260624.md
+│   └── tech-spec-HF-07-260624.md
 └── learnings/
     ├── adr.md               noteworthy observations from /adr runs
     ├── resolve.md           noteworthy observations from /resolve runs
@@ -56,13 +56,13 @@ arch/
 1. `/adr HF-XX <requirements>` — capture requirements, interview, write ADR entry
 2. `/resolve HF-XX` — if open questions remain, resolve them (or let `/tech-spec` trigger this automatically)
 3. `/tech-spec HF-XX` — expand ADR into a fully self-contained technical spec
-4. Hand `tech-spec-HF-XX.md` to your building AI agent
+4. Hand `tech-spec-HF-XX-YYMMDD.md` to your building AI agent
 
 ## Rules
 
 - `/tech-spec` detects open questions → transitions to `/resolve` → stops. Re-run `/tech-spec` after resolving.
 - The whole `/tech-spec` batch fails together if any one story has open questions.
-- Re-running any skill for the same story overwrites that story's entry.
+- Re-running `/adr` or `/resolve` for the same story overwrites that story's entry. `/tech-spec` writes a new date-stamped file per run (`tech-spec-HF-XX-YYMMDD.md`), overwriting only same-day reruns; the most recent file is authoritative.
 - ADR decisions superseded by a later story are marked `**Superseded by HF-XXX**` — never deleted.
 - `artifacts.md` is the cross-reference index — lazy-loaded per artifact, enriched over time.
 - Learnings are appended after each run when something noteworthy occurred. Clean runs write nothing.

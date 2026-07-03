@@ -1,1 +1,12 @@
 bash.exe.stackdump
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+*.swp
+*~
+
+# Local scratch
+*.local.md

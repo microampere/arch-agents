@@ -115,7 +115,7 @@ When that interview is complete, run Phase 4 again. If clean, proceed to Phase 5
 
 ## Phase 5 — Write ADR Entry & Update Domain Model
 
-Write or overwrite the entry for this story in `arch/ADR.md`.
+Synthesize the entry for this story in `arch/ADR.md`: draw together the existing `arch/ADR.md` and `arch/domain-model.md` state, everything surfaced during the Phase 3 interview, and every resolution reached in Phase 4, into one coherent, unambiguous record. Do not simply append the interview transcript — reconcile it against prior state and write the synthesized result. Write or overwrite the entry for this story in `arch/ADR.md`.
 
 **Format — follow exactly** the structure defined in `${CLAUDE_SKILL_DIR}/templates/adr-entry.md`. Omit any sections that have no information.
 
