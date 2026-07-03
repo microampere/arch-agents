@@ -1,6 +1,6 @@
 {
   "name": "arch",
-  "version": "0.4.0",
+  "version": "2.0.1",
   "description": "Architecture Decision Record and Technical Specification skills for Salesforce implementation projects.",
   "author": { "name": "JJ" },
   "license": "MIT",
