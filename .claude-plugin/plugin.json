@@ -1,8 +1,8 @@
 {
   "name": "arch",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Architecture Decision Record and Technical Specification skills for Salesforce implementation projects.",
   "author": { "name": "JJ" },
   "license": "MIT",
-  "skills": ["./skills/adr", "./skills/resolve", "./skills/tech-spec", "./skills/reconcile"]
+  "skills": ["./skills/adr", "./skills/resolve", "./skills/tech-spec", "./skills/reconcile", "./skills/tech-spec-chain"]
 }

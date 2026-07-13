@@ -38,6 +38,14 @@ Fully automated, with a single bulk approval gate. Diffs a story's shipped code 
 /reconcile HF-48
 ```
 
+### `/tech-spec-chain` — Regenerate a Queue of Stale Specs
+
+Semi-automated. Runs `/tech-spec` one story at a time across an ordered queue, pausing after each one for an explicit y/n before moving to the next — for the case where `/reconcile` flags several not-yet-built siblings as stale in one run and you want to review or act on each regenerated spec before committing to the next, rather than regenerating all of them blind. Declining just tells you the exact command to resume the remaining queue later.
+
+```
+/tech-spec-chain HF-02 HF-07 HF-34
+```
+
 ## Installation
 
 Install this plugin into your Salesforce project via Claude Code's plugin manager, or clone this repo and install locally.
@@ -68,6 +76,7 @@ arch/
 3. `/tech-spec HF-XX` — expand ADR into a fully self-contained technical spec
 4. Hand `tech-spec-HF-XX-YYMMDD.md` to your building AI agent
 5. After the story is built and merged, `/reconcile HF-XX` — audit as-built vs. designed, correct the living docs, flag stale siblings
+6. If `/reconcile` flagged multiple stale siblings, `/tech-spec-chain HF-YY HF-ZZ ...` — regenerate them one at a time, confirming after each
 
 ## Rules
 
@@ -78,7 +87,8 @@ arch/
 - ADR decisions superseded by a later story are marked `**Superseded by HF-XXX**` — never deleted. As-built corrections from `/reconcile` are marked `**As-built (HF-XXX):**` beside the original text — also never deleted.
 - `artifacts.md` is the cross-reference index — lazy-loaded per artifact, enriched over time. `/reconcile` is the only skill that flips a story's status from `(not-built)` to `(built)`.
 - Learnings are appended after each run when something noteworthy occurred. Clean runs write nothing.
+- `/tech-spec-chain` stops for a y/n after every story in its queue — it never runs the whole list unattended.
 
 ## Version
 
-2.2.0
+2.3.0
