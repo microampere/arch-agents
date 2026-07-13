@@ -30,6 +30,14 @@ Fully automated. Reads requirements and ADR decisions for one or more stories an
 
 Multiple stories in one invocation are processed sequentially — use this when stories are closely related.
 
+### `/reconcile` — Reconcile As-Built vs. Designed
+
+Fully automated, with a single bulk approval gate. Diffs a story's shipped code against its ADR entry, domain model, and tech spec; classifies every disagreement (missing, changed, or built-but-never-specified); writes the corrected current truth back into the living docs as non-destructive `As-built` annotations; flags security/sharing-sensitive deltas for explicit ratification; and reports (without auto-running) any not-yet-built sibling stories whose specs now reference stale information.
+
+```
+/reconcile HF-48
+```
+
 ## Installation
 
 Install this plugin into your Salesforce project via Claude Code's plugin manager, or clone this repo and install locally.
@@ -41,14 +49,16 @@ arch/
 ├── requirements.md          verbatim requirements per story
 ├── ADR.md                   architecture decisions per story
 ├── domain-model.md          current-state snapshot of objects, fields, relationships, record types
-├── artifacts.md             manifest of every Salesforce artifact built across all stories
+├── artifacts.md             manifest of every Salesforce artifact built across all stories — each story section tagged (not-built) / (built)
+├── action-log.md            one line per completed run of any skill — `YYYY-MM-DD hh:mm - {command} {story}`
 ├── tech-specs/
 │   ├── tech-spec-HF-02-260624.md
 │   └── tech-spec-HF-07-260624.md
 └── learnings/
     ├── adr.md               noteworthy observations from /adr runs
     ├── resolve.md           noteworthy observations from /resolve runs
-    └── tech-spec.md         noteworthy observations from /tech-spec runs
+    ├── tech-spec.md          noteworthy observations from /tech-spec runs
+    └── reconcile.md         noteworthy observations from /reconcile runs
 ```
 
 ## Workflow
@@ -57,16 +67,18 @@ arch/
 2. `/resolve HF-XX` — if open questions remain, resolve them (or let `/tech-spec` trigger this automatically)
 3. `/tech-spec HF-XX` — expand ADR into a fully self-contained technical spec
 4. Hand `tech-spec-HF-XX-YYMMDD.md` to your building AI agent
+5. After the story is built and merged, `/reconcile HF-XX` — audit as-built vs. designed, correct the living docs, flag stale siblings
 
 ## Rules
 
 - `/tech-spec` detects open questions → transitions to `/resolve` → stops. Re-run `/tech-spec` after resolving.
 - The whole `/tech-spec` batch fails together if any one story has open questions.
+- `/tech-spec` also warns (but does not block) if a related prior story was speced but never reconciled — its ADR grounding may be stale.
 - Re-running `/adr` or `/resolve` for the same story overwrites that story's entry. `/tech-spec` writes a new date-stamped file per run (`tech-spec-HF-XX-YYMMDD.md`), overwriting only same-day reruns; the most recent file is authoritative.
-- ADR decisions superseded by a later story are marked `**Superseded by HF-XXX**` — never deleted.
-- `artifacts.md` is the cross-reference index — lazy-loaded per artifact, enriched over time.
+- ADR decisions superseded by a later story are marked `**Superseded by HF-XXX**` — never deleted. As-built corrections from `/reconcile` are marked `**As-built (HF-XXX):**` beside the original text — also never deleted.
+- `artifacts.md` is the cross-reference index — lazy-loaded per artifact, enriched over time. `/reconcile` is the only skill that flips a story's status from `(not-built)` to `(built)`.
 - Learnings are appended after each run when something noteworthy occurred. Clean runs write nothing.
 
 ## Version
 
-2.1.0
+2.2.0

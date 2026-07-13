@@ -117,6 +117,16 @@ After writing the ADR entry, upsert this story's agreed **data-model** decisions
 
 ---
 
+## Log the Action
+
+After Phase 5 completes, append one line to `arch/action-log.md` (create it with a `# Action Log` header if it does not exist yet), using a human-readable local timestamp at the moment of writing:
+
+```
+<YYYY-MM-DD hh:mm> - adr <STORY-KEY>
+```
+
+---
+
 ## Learnings
 
 After Phase 5 completes, reflect on the full run. If anything noteworthy occurred — use your judgment — append an entry to `arch/learnings/adr.md`. Create `arch/learnings/` if it does not exist.

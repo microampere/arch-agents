@@ -39,7 +39,21 @@ If **any** story has open questions, do not proceed with spec generation. Instea
 
 3. Once all open questions are resolved and `arch/ADR.md` is updated, **stop**. Do not continue to Phase 2 or generate any tech specs. The user must re-invoke `/tech-spec` after resolving.
 
-If all stories are clean, proceed silently to Phase 2.
+If all stories are clean, proceed silently to Phase 1b.
+
+---
+
+## Phase 1b — Unreconciled-Prior Warning
+
+If `arch/action-log.md` does not exist, skip this check entirely — nothing to warn about yet.
+
+For each story in the input, identify its **related priors** — any other story its ADR entry references via a `**Superseded by**` marker (in either direction). For each related prior, find its most recent `tech-spec` line in `arch/action-log.md`. If one exists, check whether a `reconcile` line for that same story appears anywhere after it in the log.
+
+If a related prior has a `tech-spec` entry with no later `reconcile` entry, warn before generating this story's spec:
+
+> **`<PRIOR-KEY>` was speced but its build hasn't been reconciled yet — this spec may be generated from a stale ADR. Run `/reconcile <PRIOR-KEY>` first, or continue anyway?**
+
+Wait for the user's choice. Choosing to continue proceeds to Phase 2 as normal. Choosing to reconcile first stops this run — re-invoke `/tech-spec` after reconciling.
 
 ---
 
@@ -125,16 +139,28 @@ If nothing is reused, write: `None — all artifacts in this story are new.`
 
 After writing each tech-spec file, update `arch/artifacts.md`:
 
-1. Remove all existing entries for this story (the `## <STORY-KEY>` section and its bullets).
-2. Append a new section for this story listing every artifact introduced by this story (not reused ones):
+1. Remove all existing entries for this story (the `## <STORY-KEY> (...)` section and its bullets).
+2. Append a new section for this story listing every artifact introduced by this story (not reused ones). The header carries a status word — always `(not-built)` when written here; `/reconcile` is the only skill that ever flips it to `(built)`:
 
 ```markdown
-## <STORY-KEY>
+## <STORY-KEY> (not-built)
 
 - **<API Name>** (<Type>) — <description — specific enough that a future run can determine reuse without reading the full tech-spec file>
 ```
 
+If a section for this story already exists with status `(built)`, preserve that status instead of resetting it to `(not-built)` — a re-run of `/tech-spec` on an already-built story (e.g. to fix a doc issue) shouldn't undo its reconciliation state.
+
 3. If you enriched any existing artifact entry during lazy-loading in Phase 3a, update that entry's description in place.
+
+---
+
+## Log the Action
+
+After Phase 4 completes, append one line to `arch/action-log.md` (create it with a `# Action Log` header if it does not exist yet), using a human-readable local timestamp at the moment of writing, one line per story processed:
+
+```
+<YYYY-MM-DD hh:mm> - tech-spec <STORY-KEY>
+```
 
 ---
 
